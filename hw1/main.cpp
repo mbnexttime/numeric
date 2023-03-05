@@ -40,22 +40,37 @@ void check_kahan() {
 }
 
 float pairwise_sum_simd(float *x, int n) {
-    if (n == 1) {
-        return x[0];
-    }
+    //
+    while (n > 16) {
+        while (n % 8 > 0) {
+            x[n / 2] += x[n - 1];
+            n--;
+        }
+
 #pragma omp simd
-    {
-        for (int i = 0; 2 * i + 1 < n; i++) {
-            x[i] = x[i * 2] + x[i * 2 + 1];
+        for (int i = 0; i < n / 2; i += 8) {
+            x[i] += x[n / 2 + i];
+            x[i + 1] += x[n / 2 + i + 1];
+            x[i + 2] += x[n / 2 + i + 2];
+            x[i + 3] += x[n / 2 + i + 3];
+            x[i + 4] += x[n / 2 + i + 4];
+            x[i + 5] += x[n / 2 + i + 5];
+            x[i + 6] += x[n / 2 + i + 6];
+            x[i + 7] += x[n / 2 + i + 7];
         }
-        if (n % 2 != 0) {
-            x[n / 2] = x[n - 1];
-        }
+
+        n /= 2;
     }
-    return pairwise_sum_simd(x, (n + 1) / 2);
+
+    while (n > 1) {
+        x[0] += x[n - 1];
+        n--;
+    }
+
+    return x[0];
 }
 
-float length(const float* x, int n) {
+float length(const float *x, int n) {
     if (n == 0) {
         return 0.0f;
     }
@@ -96,7 +111,7 @@ void check_statistics() {
 
 void check_length() {
     float vec[5] = {1e12, 1e12, 1e12, 1e12, 1e12};
-    std::cout << length(vec,5) << '\n';
+    std::cout << length(vec, 5) << '\n';
 }
 
 int main() {
