@@ -4,6 +4,8 @@
 #include <ostream>
 #include <vector>
 
+using bool_t = uint16_t;
+
 class Expression
 {
 };
@@ -204,7 +206,7 @@ class Less : public Expression
 {
 
 public:
-    using value_type = bool;
+    using value_type = bool_t;
     static const size_t dimensions = E1::dimensions;
 
 private:
@@ -230,7 +232,7 @@ class All : public Expression
 {
 
 public:
-    using value_type = bool;
+    using value_type = bool_t;
     static const size_t dimensions = 1;
 
 private:
@@ -269,7 +271,7 @@ class Any : public Expression
 {
 
 public:
-    using value_type = bool;
+    using value_type = bool_t;
     static const size_t dimensions = 1;
 
 private:
